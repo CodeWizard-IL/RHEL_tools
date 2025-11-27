@@ -222,10 +222,16 @@ name=Local Air-Gapped Repository
 baseurl=file:///var/local-repo
 enabled=1
 gpgcheck=1
+# Note: Adjust gpgkey path based on your RHEL version or disable gpgcheck if keys are not available
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+       file:///var/local-repo/gpgkeys/RPM-GPG-KEY-redhat-release
 
 # For network-based repository (HTTP), use:
 # baseurl=http://<server-ip>/local-repo
+
+# If you encounter GPG key errors:
+# 1. Import keys: sudo rpm --import /var/local-repo/gpgkeys/RPM-GPG-KEY-*
+# 2. Or disable GPG checking: gpgcheck=0 (not recommended for production)
 EOF
     
     print_msg "$GREEN" "Repository configuration file created: $repo_file"

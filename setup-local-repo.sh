@@ -164,12 +164,24 @@ copy_repository() {
     
     if [[ -d "$SOURCE_DIR/packages" ]]; then
         # If packages are in a subdirectory, copy them to root of repo
-        cp -r "$SOURCE_DIR/packages"/* "$REPO_PATH/" 2>/dev/null || {
-            print_msg "$RED" "ERROR: Failed to copy packages"
+        # Check if there are any files to copy first
+        if [[ -n "$(ls -A "$SOURCE_DIR/packages" 2>/dev/null)" ]]; then
+            cp -r "$SOURCE_DIR/packages"/* "$REPO_PATH/" 2>/dev/null || {
+                print_msg "$RED" "ERROR: Failed to copy packages"
+                exit 1
+            }
+        else
+            print_msg "$RED" "ERROR: No files found in $SOURCE_DIR/packages"
             exit 1
-        }
+        fi
     else
         # Copy all RPM files from source
+        local rpm_files
+        rpm_files=$(find "$SOURCE_DIR" -name "*.rpm")
+        if [[ -z "$rpm_files" ]]; then
+            print_msg "$RED" "ERROR: No RPM files found in $SOURCE_DIR"
+            exit 1
+        fi
         find "$SOURCE_DIR" -name "*.rpm" -exec cp {} "$REPO_PATH/" \; || {
             print_msg "$RED" "ERROR: Failed to copy packages"
             exit 1
@@ -258,6 +270,20 @@ create_repo_config() {
     fi
     
     # Create new repo file
+    # Detect GPG keys dynamically
+    local gpg_keys=""
+    if [[ -d "$REPO_PATH/gpgkeys" ]] && [[ -n "$(ls -A "$REPO_PATH/gpgkeys"/RPM-GPG-KEY-* 2>/dev/null)" ]]; then
+        # Use keys from the repository
+        gpg_keys="file://$REPO_PATH/gpgkeys/RPM-GPG-KEY-redhat-release"
+        print_msg "$GREEN" "Found GPG keys in repository at $REPO_PATH/gpgkeys/"
+    elif [[ -d "/etc/pki/rpm-gpg" ]] && [[ -n "$(ls -A /etc/pki/rpm-gpg/RPM-GPG-KEY-* 2>/dev/null)" ]]; then
+        # Use system keys
+        gpg_keys="file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
+        print_msg "$GREEN" "Using system GPG keys from /etc/pki/rpm-gpg/"
+    else
+        print_msg "$YELLOW" "WARNING: No GPG keys found. Repository will be created without GPG verification."
+    fi
+    
     cat > "$repo_file" << EOF
 # Local Air-Gapped Repository
 # Created by setup-local-repo.sh on $(date)
@@ -266,17 +292,36 @@ create_repo_config() {
 name=Local Air-Gapped Repository - $REPO_NAME
 baseurl=file://$REPO_PATH
 enabled=1
+EOF
+    
+    # Add GPG configuration based on key availability
+    if [[ -n "$gpg_keys" ]]; then
+        cat >> "$repo_file" << EOF
 gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+gpgkey=$gpg_keys
 priority=1
 
 # Note: If you encounter GPG key errors, you have two options:
-# 1. Import the GPG key: sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+# 1. Import the GPG keys:
+#    sudo rpm --import $REPO_PATH/gpgkeys/RPM-GPG-KEY-* (if available)
+#    sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-* (system keys)
 # 2. Disable GPG checking (not recommended): set gpgcheck=0
 EOF
-    
-    print_msg "$GREEN" "Repository configuration created: $repo_file"
-    print_msg "$YELLOW" "Note: GPG checking is enabled. If you encounter key errors, see the repo file for options."
+        print_msg "$GREEN" "Repository configuration created: $repo_file (with GPG checking)"
+    else
+        cat >> "$repo_file" << EOF
+gpgcheck=0
+priority=1
+
+# WARNING: GPG checking is disabled because no keys were found
+# To enable GPG checking:
+# 1. Obtain the appropriate RPM-GPG-KEY files
+# 2. Import them: sudo rpm --import /path/to/RPM-GPG-KEY-*
+# 3. Set gpgcheck=1 and add gpgkey=file:///path/to/key
+EOF
+        print_msg "$YELLOW" "Repository configuration created: $repo_file (GPG checking disabled)"
+        print_msg "$YELLOW" "WARNING: GPG checking is disabled. Consider importing GPG keys for security."
+    fi
 }
 
 # Clean YUM/DNF cache
