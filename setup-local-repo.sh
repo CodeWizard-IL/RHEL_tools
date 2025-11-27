@@ -182,6 +182,15 @@ copy_repository() {
         cp -r "$SOURCE_DIR/repodata" "$REPO_PATH/" 2>/dev/null || true
     fi
     
+    # Copy GPG keys if they exist
+    if [[ -f "$SOURCE_DIR/RPM-GPG-KEY-redhat-release" ]]; then
+        print_msg "$YELLOW" "Copying GPG keys..."
+        mkdir -p "$REPO_PATH/gpgkeys"
+        cp "$SOURCE_DIR"/RPM-GPG-KEY-* "$REPO_PATH/gpgkeys/" 2>/dev/null || true
+        print_msg "$GREEN" "GPG keys copied to $REPO_PATH/gpgkeys/"
+        print_msg "$YELLOW" "To import keys, run: sudo rpm --import $REPO_PATH/gpgkeys/RPM-GPG-KEY-*"
+    fi
+    
     print_msg "$GREEN" "Repository files copied successfully"
 }
 
@@ -257,11 +266,17 @@ create_repo_config() {
 name=Local Air-Gapped Repository - $REPO_NAME
 baseurl=file://$REPO_PATH
 enabled=1
-gpgcheck=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
 priority=1
+
+# Note: If you encounter GPG key errors, you have two options:
+# 1. Import the GPG key: sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+# 2. Disable GPG checking (not recommended): set gpgcheck=0
 EOF
     
     print_msg "$GREEN" "Repository configuration created: $repo_file"
+    print_msg "$YELLOW" "Note: GPG checking is enabled. If you encounter key errors, see the repo file for options."
 }
 
 # Clean YUM/DNF cache

@@ -188,6 +188,24 @@ create_repo_metadata() {
     print_msg "$GREEN" "Repository metadata created successfully"
 }
 
+# Export GPG keys
+export_gpg_keys() {
+    print_msg "$YELLOW" "Exporting GPG keys..."
+    
+    local gpg_key_dir="/etc/pki/rpm-gpg"
+    
+    if [[ -d "$gpg_key_dir" ]] && [[ -n "$(ls -A "$gpg_key_dir"/RPM-GPG-KEY-* 2>/dev/null)" ]]; then
+        cp "$gpg_key_dir"/RPM-GPG-KEY-* "$OUTPUT_DIR/" 2>/dev/null || {
+            print_msg "$YELLOW" "WARNING: Could not copy GPG keys from $gpg_key_dir"
+            return
+        }
+        print_msg "$GREEN" "GPG keys exported successfully"
+    else
+        print_msg "$YELLOW" "WARNING: No GPG keys found in $gpg_key_dir"
+        print_msg "$YELLOW" "You may need to manually copy GPG keys for package verification"
+    fi
+}
+
 # Generate repo file for reference
 generate_repo_file() {
     local repo_file="$OUTPUT_DIR/${REPO_NAME}.repo"
@@ -300,6 +318,7 @@ main() {
     create_output_dir
     download_packages
     create_repo_metadata
+    export_gpg_keys
     generate_repo_file
     create_summary
     display_summary
