@@ -51,7 +51,7 @@ EOF
 print_msg() {
     local color=$1
     shift
-    echo -e "${color}$@${NC}"
+    echo -e "${color}$*${NC}"
 }
 
 # Check if running as root
@@ -202,7 +202,7 @@ verify_packages() {
             ((verified++))
         else
             ((failed++))
-            print_msg "$RED" "WARNING: Verification failed for $(basename $rpm_file)"
+            print_msg "$RED" "WARNING: Verification failed for $(basename "$rpm_file")"
         fi
     done < <(find "$REPO_PATH" -name "*.rpm")
     

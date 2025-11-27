@@ -48,7 +48,7 @@ EOF
 print_msg() {
     local color=$1
     shift
-    echo -e "${color}$@${NC}"
+    echo -e "${color}$*${NC}"
 }
 
 # Check if running as root
@@ -133,7 +133,7 @@ read_packages() {
     fi
     
     # Read non-empty, non-comment lines
-    PACKAGES=($(grep -v '^#' "$CONFIG_FILE" | grep -v '^[[:space:]]*$' | tr '\n' ' '))
+    mapfile -t PACKAGES < <(grep -v '^#' "$CONFIG_FILE" | grep -v '^[[:space:]]*$')
     
     if [[ ${#PACKAGES[@]} -eq 0 ]]; then
         print_msg "$RED" "ERROR: No packages found in $CONFIG_FILE"
@@ -236,7 +236,7 @@ NEXT STEPS:
    Example:
      rsync -av $OUTPUT_DIR/ <destination>
      # or
-     tar czf $(basename $OUTPUT_DIR).tar.gz $OUTPUT_DIR/
+     tar czf $(basename "$OUTPUT_DIR").tar.gz $OUTPUT_DIR/
 
 2. ON THE AIR-GAPPED SYSTEM
    Run the setup-local-repo.sh script:
