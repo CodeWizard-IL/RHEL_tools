@@ -6,6 +6,13 @@ Tools for managing Red Hat Enterprise Linux (RHEL) installations in air-gapped e
 
 This repository provides utilities for installing and managing RHEL packages on systems without internet access (air-gapped environments). The tools help you download packages on an internet-connected system and deploy them on isolated systems.
 
+## Documentation
+
+- **[README.md](README.md)** - This file, provides overview and quick start guide
+- **[EXAMPLES.md](EXAMPLES.md)** - Detailed examples and real-world scenarios
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Guidelines for contributing to this project
+- **[LICENSE](LICENSE)** - MIT License
+
 ## Features
 
 - **Package Download Tool**: Download RHEL packages and their dependencies on a connected system
@@ -185,7 +192,25 @@ MIT License - See LICENSE file for details
 
 ## Contributing
 
-Contributions are welcome! Please submit pull requests or open issues for bugs and feature requests.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+
+- Reporting bugs
+- Suggesting enhancements
+- Submitting pull requests
+- Code style guidelines
+
+## More Examples
+
+For detailed examples and real-world scenarios, see [EXAMPLES.md](EXAMPLES.md) which includes:
+
+- Basic usage scenarios
+- Advanced configurations
+- Multi-architecture support
+- Network-shared repositories
+- Security hardening
+- Database and web server setups
+- Container runtime environments
+- Troubleshooting guides
 
 ## Support
 
