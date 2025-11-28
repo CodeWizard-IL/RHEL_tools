@@ -1,0 +1,13 @@
+# Workspace Directory
+
+This directory is used as the default working directory when running the container.
+
+Mount your projects here:
+
+```bash
+docker run -it --rm \
+  -v $(pwd)/workspace:/workspace \
+  rhel-devops-toolbox:latest
+```
+
+Or use docker-compose which automatically mounts this directory.

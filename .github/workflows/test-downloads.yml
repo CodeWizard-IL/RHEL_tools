@@ -1,0 +1,49 @@
+name: Test Download Files
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-downloads:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        push: false
+        tags: rhel-devops-toolbox:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Run download test
+      run: |
+        docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+        docker-compose -f docker-compose.test.yml down
+
+    - name: Verify downloads
+      run: |
+        if [ -d "test_installation_files" ]; then
+          echo "Installation files directory exists"
+          ls -la test_installation_files/
+          # Check if some files were downloaded
+          file_count=$(find test_installation_files -type f | wc -l)
+          if [ "$file_count" -gt 0 ]; then
+            echo "Download test passed: $file_count files downloaded"
+          else
+            echo "Download test failed: no files downloaded"
+            exit 1
+          fi
+        else
+          echo "Installation files directory not found"
+          exit 1
+        fi

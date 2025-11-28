@@ -1,0 +1,77 @@
+name: Docker Compose Installation Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+  pull_request:
+    branches:
+      - main
+      - develop
+      - feature/*
+  workflow_dispatch:
+
+jobs:
+  test-docker-compose:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Create Installation Files directory
+        run: |
+          mkdir -p Installation_Files
+      
+      - name: Build Docker image
+        working-directory: ./docker
+        run: |
+          docker compose build
+      
+      - name: Start services with docker-compose
+        working-directory: ./docker
+        env:
+          DOCKER_COMPOSE_PROJECT_NAME: rhel-devops-toolbox-test
+          DOCKER_NETWORK_MODE: bridge
+        run: |
+          docker compose up -d
+      
+      - name: Wait for container to be ready
+        run: |
+          echo "Waiting for container to initialize..."
+          sleep 10
+      
+      - name: Check container status
+        run: |
+          docker ps -a
+          docker logs rhel-devops-toolbox-test
+      
+      - name: Verify container is running
+        run: |
+          if [ "$(docker inspect -f '{{.State.Running}}' rhel-devops-toolbox-test)" != "true" ]; then
+            echo "Container is not running!"
+            docker logs rhel-devops-toolbox-test
+            exit 1
+          fi
+          echo "Container is running successfully"
+      
+      - name: Test basic commands in container
+        run: |
+          docker exec rhel-devops-toolbox-test bash -c "which bash"
+          docker exec rhel-devops-toolbox-test bash -c "ls -la /project"
+      
+      - name: Stop and remove containers
+        if: always()
+        working-directory: ./docker
+        run: |
+          docker compose down -v
+      
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          docker logs rhel-devops-toolbox-test || true

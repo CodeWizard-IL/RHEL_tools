@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        ".env": false,
+        "**/.env": false
+    }
+}

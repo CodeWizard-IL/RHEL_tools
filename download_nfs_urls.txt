@@ -1,0 +1,47 @@
+# Direct download URLs for RHEL 9.3 NFS packages
+# Use these URLs if running the script on Ubuntu/Debian
+# You can download with: wget -P Installation_Files/nfs-tools/ <URL>
+
+# Base repository URL
+# https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/
+# https://download.rockylinux.org/pub/rocky/9/AppStream/x86_64/os/Packages/
+
+# Essential NFS packages (browse to find exact version):
+# Core NFS
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/n/nfs-utils-2.5.4-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/r/rpcbind-1.2.6-*.el9.x86_64.rpm
+
+# Dependencies
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libtirpc-1.3.3-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/g/gssproxy-0.8.4-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/q/quota-4.06-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/q/quota-nls-4.06-*.el9.noarch.rpm
+
+# Libraries
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libbasicobjects-0.1.1-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libcollection-0.7.0-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libini_config-1.3.1-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libpath_utils-0.2.1-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libref_array-0.1.5-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libverto-0.3.2-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libverto-libevent-0.3.2-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libnfsidmap-2.5.4-*.el9.x86_64.rpm
+
+# System utilities
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/k/kmod-28-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/d/device-mapper-libs-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/e/e2fsprogs-libs-1.46.5-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/d/diffutils-3.7-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libselinux-utils-3.6-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/p/policycoreutils-3.6-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/k/keyutils-1.6.3-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libcom_err-1.46.5-*.el9.x86_64.rpm
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/l/libevent-2.1.12-*.el9.x86_64.rpm
+
+# Python dependencies
+https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/p/python3-pyyaml-5.4.1-*.el9.x86_64.rpm
+
+# Manual download command for all packages:
+# cd Installation_Files/nfs-tools/
+# For browsing packages, visit:
+# https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/Packages/

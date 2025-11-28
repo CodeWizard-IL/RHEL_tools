@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  test-downloads:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: rhel-devops-toolbox:test
+    container_name: test-downloads
+    hostname: test-downloads
+
+    # Environment variables
+    environment:
+      - INSTALL_DIR=/project/test_installation_files
+      - SKIP_EXISTING=false
+
+    # Volumes
+    volumes:
+      - ..:/project
+
+    # Network - allow internet for downloads
+    network_mode: bridge
+
+    # Run the download script
+    command: >
+      bash -c "
+        cd /project &&
+        chmod +x download_installation_files.sh &&
+        ./download_installation_files.sh &&
+        echo 'Checking downloaded files...' &&
+        ls -la /project/test_installation_files/ &&
+        echo 'Download test completed successfully!'
+      "

@@ -1,0 +1,61 @@
+services:
+  ###############################################################################
+  # RHEL DevOps Toolbox Container
+  ###############################################################################
+  devops-toolbox:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: rhel-devops-toolbox:latest
+    container_name: ${DOCKER_COMPOSE_PROJECT_NAME:-rhel-devops-toolbox}
+    hostname: devops-toolbox
+  
+    # Environment variables from .env
+    environment:
+      - KUBECONFIG=/root/.kube/config
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    
+    # Volumes
+    volumes:
+      # Mount entire project directory
+      - ..:/project
+      
+      # Mount Installation_Files for offline installation
+      - ../Installation_Files:/project/Installation_Files
+      
+      # Mount Docker socket (for docker commands)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    
+    # Network configuration - use 'none' for offline installation/download
+    network_mode: ${DOCKER_NETWORK_MODE:-none}
+    
+    # Keep container running
+    command: tail -f /dev/null
+
+  ###############################################################################
+  # Portainer - Docker Management UI
+  ###############################################################################
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    hostname: portainer
+    restart: unless-stopped
+    
+    environment:
+      - PORTAINER_ADMIN_PASSWORD=${PORTAINER_ADMIN_PASSWORD:-$$2y$$05$$8VzTLjhXyZ0OnTkL8FvqfOKxYHxPqKBqS2FEZmZvvZQqxVxGxZJ5i}
+    
+    ports:
+      - "9000:9000"
+      - "9443:9443"
+    
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    
+    command: --http-enabled
+
+volumes:
+  portainer_data:
+  
+
+
